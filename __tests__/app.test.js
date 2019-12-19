@@ -45,4 +45,28 @@ describe('app routes', () => {
         });
       });
   });
+  it('fails if a user puts in wrong username', async() => {
+    await User.create({ username: 'treemo', password: 'hello' });
+    return request(app)
+      .post('/api/v1/auth/login')
+      .send({ username: 'treemomoney', password: 'hello' })
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'Invalid Username/Password',
+          status: 401
+        });
+      });
+  });
+  it('fails if a user puts in wrong password', async() => {
+    await User.create({ username: 'treemo', password: 'hello' });
+    return request(app)
+      .post('/api/v1/auth/login')
+      .send({ username: 'treemo', password: 'hellotreemo' })
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'Invalid Username/Password',
+          status: 401
+        });
+      });
+  });
 });
