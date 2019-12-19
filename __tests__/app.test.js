@@ -19,13 +19,27 @@ describe('app routes', () => {
     return mongoose.connection.close();
   });
 
-  it('creates a user', () =>{
+  it('creates a user', () => {
     return request(app)
       .post('/api/v1/auth/signup')
       .send({ username: 'treemo', password: 'hello' })
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.any(String),
+          username: 'treemo',
+          __v: 0
+        });
+      });
+  });
+
+  it('lets a user login', async() => {
+    const user = await User.create({ username: 'treemo', password: 'hello' });
+    return request(app)
+      .post('/api/v1/auth/login')
+      .send({ username: 'treemo', password: 'hello' })
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: user.id,
           username: 'treemo',
           __v: 0
         });
